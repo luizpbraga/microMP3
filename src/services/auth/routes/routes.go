@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/luizpbraga/microMP3/src/server/controller"
+	"github.com/luizpbraga/microMP3/src/services/auth/controller"
 )
 
 func LoadRoutes(app *fiber.App) {

@@ -1,10 +1,11 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/luizpbraga/microMP3/src/database"
-	"github.com/luizpbraga/microMP3/src/server/routes"
-	"log"
+	"github.com/luizpbraga/microMP3/src/services/auth/routes"
 )
 
 func check(err error) {
