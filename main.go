@@ -16,15 +16,13 @@ func check(err error) {
 func main() {
 
 	// DATABASE
-	db, err := database.InitDataBase()
-
-	if err != nil {
+	if db, err := database.InitDataBase(); err != nil {
 		log.Fatal(err)
+		// BUG???
+		defer db.Close()
 	}
 
-	defer db.Close()
-
-	if err = db.Ping(); err != nil {
+	if err := database.Db.Ping(); err != nil {
 		log.Fatal(err)
 	}
 

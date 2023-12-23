@@ -59,11 +59,18 @@ func initMySQLDataSorce() (string, error) {
 
 }
 
+var Db *sql.DB
+
 func InitDataBase() (*sql.DB, error) {
 	connection_string, err := initMySQLDataSorce()
+
 	if err != nil {
 		return nil, err
 	}
+
 	fmt.Print(connection_string)
-	return sql.Open("mysql", connection_string)
+
+	Db, err = sql.Open("mysql", connection_string)
+
+	return Db, err
 }

@@ -6,5 +6,5 @@ import (
 )
 
 func LoadRoutes(app *fiber.App) {
-	app.Get("/login", controller.Login)
+	app.Post("/login", controller.Login)
 }
