@@ -17,9 +17,16 @@ func main() {
 
 	// DATABASE
 	db, err := database.InitDataBase()
-	check(err)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	defer db.Close()
-	check(db.Ping())
+
+	if err = db.Ping(); err != nil {
+		log.Fatal(err)
+	}
 
 	// SERVER
 	app := fiber.New()
