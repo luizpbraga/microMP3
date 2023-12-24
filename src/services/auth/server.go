@@ -1,11 +1,10 @@
 package main
 
 import (
-	"log"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/luizpbraga/microMP3/src/database"
 	"github.com/luizpbraga/microMP3/src/services/auth/routes"
+	"log"
 )
 
 func check(err error) {
@@ -15,7 +14,6 @@ func check(err error) {
 }
 
 func main() {
-
 	// DATABASE
 	if db, err := database.InitDataBase(); err != nil {
 		log.Fatal(err)
