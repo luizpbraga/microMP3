@@ -3,6 +3,8 @@ package controller
 import (
 	"encoding/base64"
 	"errors"
+	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -18,33 +20,36 @@ func keyFunc(token *jwt.Token) (any, error) {
 	return secretKey, nil
 }
 
-// creates a JWT token with a custom claim (authorized: true) and sets an expiration time.
-func generateToken() (string, error) {
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["authorized"] = true
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix() // Token expires in 24 hours
-	return token.SignedString(secretKey)
-}
-
 type authEncoded struct {
-	username, password string
+	email, password string
 }
 
 // Decods the Authorization HEADER
 func decodeAuth(auth string) (*authEncoded, error) {
 	// since auth stats with "Bearer " , we ignore this part
-	decodedCredential, err := base64.StdEncoding.DecodeString(auth[6:])
+	decodedCredential, err := base64.StdEncoding.DecodeString(auth[7:])
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Decodification error: %w", err)
 	}
 
 	credential := strings.SplitN(string(decodedCredential), ":", 2)
 	if len(credential) != 2 {
-		return nil, errors.New("Bad Request")
+		return nil, errors.New("Bad Request: Invalid Credential")
 	}
 
-	return &authEncoded{username: credential[0], password: credential[1]}, nil
+	return &authEncoded{email: credential[0], password: credential[1]}, nil
+}
+
+// creates a JWT token with a custom claim and sets an expiration time.
+func generateTokenFromEmail(email string) (string, error) {
+	// novo token JWT
+	token := jwt.New(jwt.SigningMethodHS256)
+	// Definir os claims do token
+	claims := token.Claims.(jwt.MapClaims)
+	claims["email"] = email
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	// Assinar o token com a secret key
+	return token.SignedString(secretKey)
 }
 
 // Login usa o header Authorization para verificar a assinatura de um usuario
@@ -59,38 +64,28 @@ func Login(c *fiber.Ctx) error {
 
 	decodedAuth, err := decodeAuth(encodedAuth)
 	if err != nil {
+		log.Print(err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Missing Credentials",
 		})
 	}
 
-	// TODO: get the username and password from auth
-	rows, err := database.Db.Query("SELECT email, password FROM user WHERE email=$1", decodedAuth.username)
-
-	if err != nil {
+	var email, password string
+	if err := database.Db.QueryRow("SELECT email, password FROM user WHERE email = ?", decodedAuth.email).Scan(&email, &password); err != nil {
+		log.Print(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Database Failed",
 		})
 	}
 
-	defer rows.Close()
-
-	var email, password string
-
-	if err := rows.Scan(&email, &password); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Missing email and password",
-		})
-	}
-
-	if decodedAuth.username != email || decodedAuth.password != password {
+	if decodedAuth.email != email || decodedAuth.password != password {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Invalid Credentials",
 		})
 	}
 
 	// novo token JWT
-	token := jwt.New(jwt.SigningMethodES256)
+	token := jwt.New(jwt.SigningMethodHS256)
 	// Definir os claims do token
 	claims := token.Claims.(jwt.MapClaims)
 	claims["email"] = email
@@ -98,8 +93,9 @@ func Login(c *fiber.Ctx) error {
 	// Assinar o token com a secret key
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
+		log.Print(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Erro ao Assinar o Token",
+			"message": "JWT error",
 		})
 	}
 

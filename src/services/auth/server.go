@@ -1,4 +1,4 @@
-package auth
+package main
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -6,12 +6,6 @@ import (
 	"github.com/luizpbraga/microMP3/src/services/auth/routes"
 	"log"
 )
-
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
 
 func main() {
 	// DATABASE
