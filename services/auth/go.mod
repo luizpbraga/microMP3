@@ -1,4 +1,4 @@
-module github.com/luizpbraga/microMP3
+module github.com/luizpbraga/microMP3/services/auth
 
 go 1.19
 
