@@ -4,4 +4,4 @@ Service that turns MP4 into MP3
 
 The idea is...
 
-![plan](src/picture/plan.png)
+![plan](picture/plan.png)
