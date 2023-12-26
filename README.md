@@ -1,6 +1,6 @@
 # microMP3
 
-Service that turns MP4 into MP3. working in progress...
+Service that turns MP4 into MP3. Work in progress...
 
 To run
 
