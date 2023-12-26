@@ -31,6 +31,6 @@ services:
       - MYSQL_PASSWORD=$MYSQL_PASSWORD
     volumes:
       - ./databases/auth/init.sql:/docker-entrypoint-initdb.d/init.sql
-      # - mysql-volume:/var/lib/mysql
+      - db-data:/var/lib/mysql
 volumes:
-  mysql-volume:
+  db-data:
