@@ -2,6 +2,7 @@ version: "3"
 
 services:
   auth:
+    container_name: auth
     build:
       context: ./services/auth/
     restart: always
@@ -22,6 +23,7 @@ services:
       - "db"
 
   db:
+    container_name: mysql
     image: mysql:latest
     restart: always
     environment:
@@ -30,7 +32,41 @@ services:
       - MYSQL_USER=$MYSQL_USER
       - MYSQL_PASSWORD=$MYSQL_PASSWORD
     volumes:
-      - ./databases/auth/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./databases/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
       - db-data:/var/lib/mysql
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+      - ./databases/mongo/init.js:/docker-entrypoint-initdb.d/init.js:ro
+    networks:
+      - mongo-network
+    environment:
+      - MONGO_INITDB_DATABASE=videos # Define o nome do banco de dados a ser criado
+    command: ["--bind_ip_all"]
+
+  gateway:
+    build:
+      context: ./services/gateway/
+    restart: always
+    container_name: gateway
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/videos
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mongodb
+    networks:
+      - mongo-network
+
+networks:
+  mongo-network:
+
 volumes:
   db-data:
+  mongodb-data:
