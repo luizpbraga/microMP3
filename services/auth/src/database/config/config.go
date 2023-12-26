@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -11,12 +12,14 @@ type mapEnvs map[mysqlENV]string
 
 func InitMySQLDataSorce() (string, error) {
 	envs := mapEnvs{
-		"MYSQL_DB":       os.Getenv("MYSQL_DB"),
 		"MYSQL_PORT":     os.Getenv("MYSQL_PORT"),
 		"MYSQL_USER":     os.Getenv("MYSQL_USER"),
 		"MYSQL_HOST":     os.Getenv("MYSQL_HOST"),
+		"MYSQL_DATABASE": os.Getenv("MYSQL_DATABASE"),
 		"MYSQL_PASSWORD": os.Getenv("MYSQL_PASSWORD"),
 	}
+
+	log.Println(envs)
 
 	if err := envs.check(); err != nil {
 		return "", err
@@ -43,12 +46,10 @@ func (envs mapEnvs) check() error {
 
 func (envs mapEnvs) format() string {
 	var (
-		DB       = envs["MYSQL_DB"]
-		PORT     = envs["MYSQL_PORT"]
-		USER     = envs["MYSQL_USER"]
 		HOST     = envs["MYSQL_HOST"]
+		USER     = envs["MYSQL_USER"]
+		DATABASE = envs["MYSQL_DATABASE"]
 		PASSWORD = envs["MYSQL_PASSWORD"]
 	)
-
-	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", USER, PASSWORD, HOST, PORT, DB)
+	return fmt.Sprintf("%s:%s@tcp(%s)/%s", USER, PASSWORD, HOST, DATABASE)
 }

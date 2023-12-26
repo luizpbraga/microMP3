@@ -1,9 +1,9 @@
 -- auth_user é o usuario responsavel for salvar os dados de usuario
-CREATE USER 'auth_user'@'localhost' IDENTIFIED BY 'Aauth123';
+CREATE USER IF NOT EXISTS 'user_auth'@'localhost' IDENTIFIED BY '123';
 
 CREATE DATABASE IF NOT EXISTS auth;
 
-GRANT ALL PRIVILEGES ON auth.* TO 'auth_user'@'localhost';
+GRANT ALL PRIVILEGES ON auth.* TO 'user_auth'@'localhost';
 
 USE auth;
 

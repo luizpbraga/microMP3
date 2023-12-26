@@ -1,24 +1,11 @@
-FROM golang:1.22rc1-bookworm
+FROM golang:latest
 
-WORKDIR /go/src/app
-
-ENV MYSQL_DB=auth
-ENV MYSQL_PORT=3306
-ENV MYSQL_USER=test
-ENV MYSQL_HOST=localhost
-ENV MYSQL_PASSWORD=test
-ENV JWT_SECRET=banana
+WORKDIR /app
 
 COPY . .
 
 RUN go mod download
 
-RUN go build -o auth_server server.go
+RUN GOOS=linux go build
 
-
-EXPOSE 3000
-
-CMD ["./auth_server"]
-
-
-
+CMD ["./auth"]

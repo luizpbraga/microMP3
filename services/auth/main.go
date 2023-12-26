@@ -22,5 +22,6 @@ func main() {
 	// SERVER
 	app := fiber.New()
 	router.LoadRoutes(app)
-	log.Fatal(app.Listen("0.0.0.0:3000"))
+	log.Println("Server Listening on PORT 8080")
+	log.Fatal(app.Listen(":8080"))
 }

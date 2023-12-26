@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-var secretKey = []byte(os.Getenv("JWT_SECRET"))
+var secretKey = []byte(os.Getenv("API_SECRET"))
 
 func keyFunc(token *jwt.Token) (any, error) {
 	return secretKey, nil
