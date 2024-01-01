@@ -1,14 +1,26 @@
 # microMP3
 
-Service that turns MP4 into MP3. Work in progress...
+Service that turns Videos into MP3. Work in progress...
 
-To run
+##### Project Status
+
+- [x] Auth Service
+- [ ] Gateway Service (doing...)
+- [ ] Notification Service
+- [ ] Video to MP3 Service
+- [ ] Cluster this with Kubernetes
+
+##### API
+
+TODO: use swagger
+
+##### To run
 
 ```sh
     docker-compose up --build -d
 ```
 
-to stop
+##### To stop
 
 ```sh
     docker-compose down
